@@ -1,0 +1,57 @@
+html{
+    width: 100%;
+    height:100%;
+}
+body{
+    width: 100%;
+    height:100%;
+    display: grid;
+    grid-template:1fr 3fr 1fr/1fr 1fr 1fr;
+    grid-template-areas: 
+    ". head ."
+    "p1 board p2"
+    "p1ai . p2ai";
+    text-align: center;
+}
+h1{
+    grid-area:head;
+}
+#board{
+    background-color: black;
+    grid-area: board;
+    display: grid;
+    grid-template: repeat(3, 1fr)/repeat(3, 1fr);
+    gap:3px;
+}
+#board>*{
+    background-color: white;
+    font-size: 50px;
+    line-height: 200%;
+}
+#board>*:hover{
+    background-color: rgba(255, 255, 255, 0.986) ;
+}
+#p1{
+    grid-area: p1;
+}
+#p2{
+    grid-area: p2;
+}
+
+.ai{
+    background-color: rgba(10, 224, 224, 0.315);
+    height:50%;
+    line-height: 150%;
+    font-size: 30px;
+    border-radius: 10px;
+}
+.ai:hover{
+    background-color: rgba(8, 133, 133, 0.705);
+}
+
+#p1ai{
+    grid-area: p1ai;
+}
+#p2ai{
+    grid-area: p2ai;
+}
