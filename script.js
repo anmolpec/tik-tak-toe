@@ -117,6 +117,7 @@ let player=(character, id)=>{
         console.log(index, "logic");
         return index;
     }
+    
 
     function bestMove(oppChar, arr){
         let charArr=[];
@@ -125,7 +126,7 @@ let player=(character, id)=>{
                 charArr.push(i);
             }
         }
-        /*find all opp char. find all spaces. each space gets valeu based on how ,many op char lines can be drawn throgh. pick randomly from max */
+        //find all opp char. find all spaces. each space gets valeu based on how ,many op char lines can be drawn throgh. pick randomly from max
         let spaceArr=[];
         let spaceScore=[];
         for(let i=0;i<9;i++){
@@ -185,14 +186,121 @@ let player=(character, id)=>{
             index=randomMove(arr);
         }
         else{
-            index=myLineComplete(this.char, arr);
-            if(index>=0 && arr[index].textContent=="")return index;
-            index=myLineComplete(this.char=="X"?"O":"X", arr);
-            if(index>=0 && arr[index].textContent=="")return index;
-            index=bestMove(this.char=="X"?"O":"X", arr);
+            if(count<=0){
+                index=myLineComplete(this.char, arr);
+                if(index>=0 && arr[index].textContent=="")return index;
+                index=myLineComplete(this.char=="X"?"O":"X", arr);
+                if(index>=0 && arr[index].textContent=="")return index;
+                index=bestMove(this.char=="X"?"O":"X", arr);
+            }
+            else{
+                let arrCopy=arr.map((element,i)=>{
+                    if(element.textContent=="")
+                        return i;
+                    else   
+                        return element.textContent;
+                });
+                let spaceArr=[];
+                let spaceScore=[];
+                for(let i=0;i<9;i++){
+                    if(arrCopy[i]!="X" && arrCopy[i]!="O"){
+                        spaceArr.push(i);
+                        spaceScore.push(0);
+                    }
+                }
+                for(let i=0;i<spaceArr.length;i++){
+                    arrCopy[spaceArr[i]]=this.char;
+                    spaceScore[i]=minmax(this.char=="O"?true:false, arrCopy);
+                    arrCopy[spaceArr[i]]=spaceArr[i];
+                    console.log(spaceScore[i]);
+                }
+                if(this.char=="X"){
+                    let max=-1;
+                    for(let i=0;i<spaceArr.length;i++){
+                        if(spaceScore[i]>max){
+                            max=spaceScore[i];
+                            index=spaceArr[i];
+                        }
+                    }
+                }
+                else{
+                    let min=1;
+                    for(let i=0;i<spaceArr.length;i++){
+                        if(spaceScore[i]<min){
+                            min=spaceScore[i];
+                            index=spaceArr[i];
+                        }
+                    }
+                }
+            }
+        }
+        console.log(index);
+        return index;
+    }
+
+    function minmax(maximise, arr){
+        if(win(arr)==true){
+            if(maximise==true)
+                return -10;
+            else
+                return 10;
+        }
+        else if(tie(arr)==true){
+            return 0;
+        }
+        let spaceArr=[];
+        let spaceScore=[];
+        for(let i=0;i<9;i++){
+            if(arr[i]!="X" && arr[i]!="O"){
+                spaceArr.push(i);
+                spaceScore.push(0);
+            }
+        }
+        
+        for(let i=0;i<spaceArr.length;i++){
+            arr[spaceArr[i]]=maximise?"X":"O";
+            spaceScore[i]=minmax(maximise?false:true, arr);
+            arr[spaceArr[i]]=spaceArr[i];
         }
 
-        return index;
+        if(maximise==true){
+            let max=-1;
+            for(let i=0;i<spaceArr.length;i++){
+                if(spaceScore[i]>max){
+                    max=spaceScore[i];
+                }
+            }
+            return max;
+        }
+        else{
+            let min=1;
+            for(let i=0;i<spaceArr.length;i++){
+                if(spaceScore[i]<min){
+                    min=spaceScore[i];
+                }
+            }
+            return min; 
+        }
+    }
+
+
+    function win(arr){
+        const a=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        let ans=a.reduce((t,x)=>{
+            if(arr[x[0]]!="" && arr[x[0]]==arr[x[1]] && arr[x[0]]==arr[x[2]]){
+                return true;
+            }
+            else return t;
+        },false);
+        return ans;
+    }
+
+    function tie(arr){
+        for(let i=0;i<9;i++){
+            if(arr[i]!="X" && arr[i]!="O")
+                return false;
+        }
+        return true;
     }
 
     function getai(){
